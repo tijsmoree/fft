@@ -1,5 +1,5 @@
 # Use bare node image for building the application
-FROM node:22.2-alpine AS build
+FROM node:22.20-alpine AS build
 
 # Get version
 ARG VERSION
@@ -27,7 +27,7 @@ RUN pnpm install --frozen-lockfile --offline
 RUN pnpm build
 
 # Start new image from a bare nginx image
-FROM nginx:1.23-alpine
+FROM nginx:1.29-alpine
 
 # Set the working directory
 WORKDIR /var/www/html
