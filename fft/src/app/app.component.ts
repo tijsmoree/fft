@@ -1,18 +1,14 @@
-import { DatePipe } from '@angular/common';
 import { Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { version } from 'version';
 import { ChartComponent } from './components';
 import { fft } from './utility';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  imports: [FormsModule, DatePipe, ChartComponent],
+  imports: [FormsModule, ChartComponent],
 })
 export class AppComponent {
-  readonly version = version;
-
   readonly timeReal = signal<string>('');
   readonly timeImag = signal<string>('');
 
