@@ -1,0 +1,55 @@
+export function generateBounds(
+  data: number[],
+  maxTicks = 10,
+): { min: number; max: number; ticks: number[] } {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+
+  const rangeRaw = max - min;
+
+  if (rangeRaw === 0) {
+    return { min: min - 1, max: max + 1, ticks: [] };
+  }
+
+  const rawSpacing = rangeRaw / (maxTicks - 1);
+
+  const exponent = Math.floor(Math.log10(rawSpacing));
+  const fraction = rawSpacing / 10 ** exponent;
+
+  const niceFraction =
+    fraction < 1.5 ? 1 : fraction < 3 ? 2 : fraction < 7 ? 5 : 10;
+
+  const niceSpacing = niceFraction * Math.pow(10, exponent);
+
+  const niceMin = Math.floor(min / niceSpacing) * niceSpacing;
+  const niceMax = Math.ceil(max / niceSpacing) * niceSpacing;
+
+  return {
+    min: niceMin,
+    max: niceMax,
+    ticks: new Array((niceMax - niceMin) / niceSpacing - 1)
+      .fill(0)
+      .map((_, i) => niceMin + (i + 1) * niceSpacing),
+  };
+}
+
+export function generateLogarithmicBounds(data: number[]): {
+  min: number;
+  max: number;
+  ticks: number[];
+} {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+
+  const niceMax = 10 ** Math.ceil(Math.log10(max));
+
+  const factor = Math.min(4, Math.ceil(Math.log10(max / min)));
+
+  return {
+    max: niceMax,
+    min: niceMax / 10 ** factor,
+    ticks: new Array(factor)
+      .fill(0)
+      .flatMap((_, i) => [1, 0.5].map(x => niceMax * x * 10 ** -i)),
+  };
+}

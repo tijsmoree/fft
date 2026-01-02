@@ -1,0 +1,111 @@
+<div class="block">
+  <div class="row">
+    <div class="col-50">
+      <div class="row">
+        <div class="col-33">
+          <label for="time-real">Real time based</label>
+          <textarea
+            id="time-real"
+            [(ngModel)]="timeReal"
+            class="form-control"
+          ></textarea>
+        </div>
+        <div class="col-33">
+          <label for="time-imag">Imaginary time based</label>
+          <textarea
+            id="time-imag"
+            [(ngModel)]="timeImag"
+            class="form-control"
+          ></textarea>
+        </div>
+        <div class="col-33">
+          <label for="time-magn">Magnitude time based</label>
+          <textarea
+            #timeMagnField
+            id="time-magn"
+            class="form-control"
+            readonly
+            (click)="timeMagnField.select()"
+            >{{ timeMagn().join('\n') }}</textarea
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="col-50">
+      <label for="time-chart" class="right">{{ timeData().length }}</label>
+      <div #timeChart id="time-chart" class="chart">
+        <app-chart
+          [width]="timeChart.clientWidth"
+          [height]="timeChart.clientHeight"
+          [data]="timeMagn()"
+          [(cursor)]="cursor"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="block">
+  <div class="row">
+    <div class="col-50">
+      <div class="row">
+        <div class="col-33">
+          <label for="freq-real">Real frequency based</label>
+          <textarea
+            #freqRealField
+            id="freq-real"
+            class="form-control"
+            readonly
+            (click)="freqRealField.select()"
+            >{{ freqReal().join('\n') }}</textarea
+          >
+        </div>
+        <div class="col-33">
+          <label for="freq-imag">Imaginary frequency based</label>
+          <textarea
+            #freqImagField
+            id="freq-imag"
+            class="form-control"
+            readonly
+            (click)="freqImagField.select()"
+            >{{ freqImag().join('\n') }}</textarea
+          >
+        </div>
+        <div class="col-33">
+          <label for="freq-magn">Magnitude frequency based</label>
+          <textarea
+            #freqMagnField
+            id="freq-magn"
+            class="form-control"
+            readonly
+            (click)="freqMagnField.select()"
+            >{{ freqMagn().join('\n') }}</textarea
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="col-50">
+      <label for="freq-chart" class="right">{{ freqData().length }}</label>
+      <div #freqChart id="freq-chart" class="chart">
+        <app-chart
+          [width]="freqChart.clientWidth"
+          [height]="freqChart.clientHeight"
+          [data]="freqMagn()"
+          [(cursor)]="cursor"
+          inverted
+          fourier
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer" [title]="version.date | date: 'yyyy-MM-dd'">
+  tijsmoree
+  <span class="mx-1">⋅</span>
+  fft
+  <span class="mx-1">⋅</span>
+  {{ version.version }}
+</div>
