@@ -108,7 +108,13 @@ export class ChartComponent {
         lerp(0, width, invlerp(0, data.length - 1, i));
       const x2px = this.fourier()
         ? (x: number) =>
-            lerp(0, height, invlerp(Math.log(min), Math.log(max), Math.log(x)))
+            x <= 0
+              ? -height
+              : lerp(
+                  0,
+                  height,
+                  invlerp(Math.log(min), Math.log(max), Math.log(x)),
+                )
         : (x: number) => lerp(0, height, invlerp(min, max, x));
 
       ctx.globalAlpha = 0.2;

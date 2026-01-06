@@ -46,8 +46,8 @@ export function generateLogarithmicBounds(data: number[]): {
   let min = Infinity;
   let max = -Infinity;
   for (const d of data) {
-    min = d < min ? d : min;
-    max = d > max ? d : max;
+    min = d > 0 && d < min ? d : min;
+    max = d > 0 && d > max ? d : max;
   }
 
   const niceMax = 10 ** Math.ceil(Math.log10(max));
