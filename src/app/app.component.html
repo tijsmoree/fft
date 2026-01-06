@@ -3,42 +3,42 @@
     <div class="col-50">
       <div class="row">
         <div class="col-33">
-          <label for="time-real">Real time based</label>
+          <label for="time-real">Real part of signal</label>
           <textarea
             id="time-real"
             [(ngModel)]="timeReal"
             class="form-control"
+            placeholder="Give the real part of the samples, separated by new lines"
           ></textarea>
         </div>
         <div class="col-33">
-          <label for="time-imag">Imaginary time based</label>
+          <label for="time-imag">Imaginary part of signal</label>
           <textarea
             id="time-imag"
             [(ngModel)]="timeImag"
             class="form-control"
+            placeholder="Optionally, give the imaginary part of the samples, separated by new lines"
           ></textarea>
         </div>
         <div class="col-33">
-          <label for="time-magn">Magnitude time based</label>
-          <textarea
-            #timeMagnField
-            id="time-magn"
-            class="form-control"
-            readonly
-            (click)="timeMagnField.select()"
-            >{{ timeMagn().join('\n') }}</textarea
-          >
+          <label for="time-magn">Amplitude of signal</label>
+          <textarea appSelectAll id="time-magn" class="form-control" readonly>{{
+            timeAmpl().join('\n')
+          }}</textarea>
         </div>
       </div>
     </div>
 
     <div class="col-50">
-      <label for="time-chart" class="right">{{ timeData().length }}</label>
-      <div #timeChart id="time-chart" class="chart">
+      <p>
+        Signal amplitude plot
+        <span class="right">{{ timeData().length }}</span>
+      </p>
+      <div #timeChart class="chart">
         <app-chart
           [width]="timeChart.clientWidth"
           [height]="timeChart.clientHeight"
-          [data]="timeMagn()"
+          [data]="timeAmpl()"
         />
       </div>
     </div>
@@ -50,48 +50,36 @@
     <div class="col-50">
       <div class="row">
         <div class="col-33">
-          <label for="freq-real">Real frequency based</label>
-          <textarea
-            #freqRealField
-            id="freq-real"
-            class="form-control"
-            readonly
-            (click)="freqRealField.select()"
-            >{{ freqReal().join('\n') }}</textarea
-          >
+          <label for="freq-real">Real part of spectrum</label>
+          <textarea appSelectAll id="freq-real" class="form-control" readonly>{{
+            freqReal().join('\n')
+          }}</textarea>
         </div>
         <div class="col-33">
-          <label for="freq-imag">Imaginary frequency based</label>
-          <textarea
-            #freqImagField
-            id="freq-imag"
-            class="form-control"
-            readonly
-            (click)="freqImagField.select()"
-            >{{ freqImag().join('\n') }}</textarea
-          >
+          <label for="freq-imag">Imaginary part of spectrum</label>
+          <textarea appSelectAll id="freq-imag" class="form-control" readonly>{{
+            freqImag().join('\n')
+          }}</textarea>
         </div>
         <div class="col-33">
-          <label for="freq-magn">Magnitude frequency based</label>
-          <textarea
-            #freqMagnField
-            id="freq-magn"
-            class="form-control"
-            readonly
-            (click)="freqMagnField.select()"
-            >{{ freqMagn().join('\n') }}</textarea
-          >
+          <label for="freq-magn">Amplitude of spectrum</label>
+          <textarea appSelectAll id="freq-magn" class="form-control" readonly>{{
+            freqAmpl().join('\n')
+          }}</textarea>
         </div>
       </div>
     </div>
 
     <div class="col-50">
-      <label for="freq-chart" class="right">{{ freqData().length }}</label>
-      <div #freqChart id="freq-chart" class="chart">
+      <p>
+        Logarithmic single-sided spectral amplitude plot
+        <span class="right">{{ freqData().length }}</span>
+      </p>
+      <div #freqChart class="chart">
         <app-chart
           [width]="freqChart.clientWidth"
           [height]="freqChart.clientHeight"
-          [data]="freqMagn()"
+          [data]="freqAmpl()"
           inverted
           fourier
         />

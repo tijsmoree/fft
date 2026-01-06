@@ -38,7 +38,10 @@ export function generateBounds(
   };
 }
 
-export function generateLogarithmicBounds(data: number[]): {
+export function generateLogarithmicBounds(
+  data: number[],
+  maxTicks = 5,
+): {
   min: number;
   max: number;
   ticks: number[];
@@ -52,7 +55,7 @@ export function generateLogarithmicBounds(data: number[]): {
 
   const niceMax = 10 ** Math.ceil(Math.log10(max));
 
-  const factor = Math.min(4, Math.ceil(Math.log10(max / min)));
+  const factor = Math.min(maxTicks, Math.ceil(Math.log10(max / min)));
 
   return {
     max: niceMax,

@@ -6,6 +6,7 @@ import {
   computed,
   effect,
   ElementRef,
+  HostListener,
   input,
   signal,
   untracked,
@@ -18,6 +19,9 @@ import {
   lerp,
 } from '@app/utility';
 
+const BASE = 'white';
+const INDICATOR = 'yellow';
+
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
@@ -28,7 +32,7 @@ export class ChartComponent {
   private readonly canvas =
     viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
-  readonly INDICATOR = 'yellow';
+  readonly INDICATOR = INDICATOR;
 
   readonly width = input.required<number>();
   readonly height = input.required<number>();
@@ -41,7 +45,7 @@ export class ChartComponent {
     this.fourier()
       ? this.data()
           .slice(0, this.data().length / 2 + 1)
-          .map((x, i) => (i === 0 ? 1 : 2) * x)
+          .map((x, i) => (i === 0 || i === this.data().length / 2 ? 1 : 2) * x)
       : this.data(),
   );
 
@@ -51,7 +55,9 @@ export class ChartComponent {
       : generateBounds(this.selection()),
   );
 
-  readonly cursor = signal<number | undefined>(undefined);
+  readonly cursor = signal<[number, number] | undefined>(undefined);
+
+  readonly hovering = signal(false);
 
   constructor() {
     effect(() => {
@@ -70,7 +76,7 @@ export class ChartComponent {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = BASE;
 
         untracked(() => this.draw());
       }
@@ -79,33 +85,53 @@ export class ChartComponent {
     effect(() => this.draw());
   }
 
-  click(y: number): void {
+  @HostListener('mouseenter')
+  mouseenter(): void {
+    this.hovering.set(true);
+  }
+
+  @HostListener('mouseleave')
+  mouseleave(): void {
+    this.hovering.set(false);
+  }
+
+  click(x: number, y: number): void {
     const { min, max } = this.bounds();
 
-    const fraction = invlerp(this.height(), 0, y);
+    const yFraction = invlerp(this.height(), 0, y);
+    const xFraction = invlerp(0, this.width(), x);
 
     if (this.fourier()) {
-      this.cursor.set(10 ** lerp(Math.log10(min), Math.log10(max), fraction));
+      this.cursor.set([
+        xFraction / 2,
+        10 ** lerp(Math.log10(min), Math.log10(max), yFraction),
+      ]);
     } else {
-      this.cursor.set(lerp(min, max, fraction));
+      this.cursor.set([xFraction, lerp(min, max, yFraction)]);
     }
   }
 
   private draw(): void {
     const ctx = this.canvas().nativeElement.getContext('2d');
     const data = this.selection();
-    const cursor = this.cursor();
 
-    if (ctx && data.length > 0) {
+    const cursor = this.cursor();
+    const hovering = this.hovering();
+
+    if (ctx) {
       const width = this.width();
       const height = this.height();
 
       ctx.clearRect(0, 0, width, height);
 
+      if (data.length < 2) return;
+
       const { min, max, ticks } = this.bounds();
 
       const i2px = (i: number) =>
         lerp(0, width, invlerp(0, data.length - 1, i));
+      const t2px = (t: number) =>
+        lerp(0, this.fourier() ? 2 * width : width, t);
       const x2px = this.fourier()
         ? (x: number) =>
             x <= 0
@@ -132,13 +158,28 @@ export class ChartComponent {
       }
       ctx.stroke();
 
-      if (cursor != null) {
-        ctx.strokeStyle = this.INDICATOR;
+      if (hovering) {
+        const radius = 5;
+
+        ctx.globalAlpha = 0.5;
         ctx.beginPath();
-        ctx.moveTo(0, x2px(cursor));
-        ctx.lineTo(width, x2px(cursor));
+        for (let i = 0; i < data.length; i++) {
+          ctx.moveTo(i2px(i) + radius, x2px(data[i]));
+          ctx.arc(i2px(i), x2px(data[i]), radius, 0, 2 * Math.PI);
+        }
         ctx.stroke();
-        ctx.strokeStyle = 'white';
+        ctx.globalAlpha = 1;
+      }
+
+      if (cursor != null) {
+        ctx.strokeStyle = INDICATOR;
+        ctx.beginPath();
+        ctx.moveTo(0, x2px(cursor[1]));
+        ctx.lineTo(width, x2px(cursor[1]));
+        ctx.moveTo(t2px(cursor[0]), 0);
+        ctx.lineTo(t2px(cursor[0]), height);
+        ctx.stroke();
+        ctx.strokeStyle = BASE;
       }
     }
   }

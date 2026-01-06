@@ -1,5 +1,5 @@
 <div class="chart-container">
-  @if (data().length) {
+  @if (data().length > 1) {
     <div class="indicator" [style.top.rem]="0.5" [style.left.rem]="0.5">
       {{ bounds().max | number: '1.0-5' }}
     </div>
@@ -7,17 +7,25 @@
       {{ bounds().min | number: '1.0-5' }}
     </div>
 
-    @if (cursor() != null) {
+    @if (cursor(); as c) {
       <div
         class="indicator"
         [style.top.rem]="0.5"
         [style.right.rem]="0.5"
         [style.color]="INDICATOR"
       >
-        {{ cursor() | number: '1.0-2' }}
+        {{ c[0] | number: '1.0-3' }}
+      </div>
+      <div
+        class="indicator"
+        [style.bottom.rem]="0.5"
+        [style.right.rem]="0.5"
+        [style.color]="INDICATOR"
+      >
+        {{ c[1] | number: '1.0-2' }}
       </div>
     }
   }
 
-  <canvas #canvas (click)="click($event.offsetY)"></canvas>
+  <canvas #canvas (click)="click($event.offsetX, $event.offsetY)"></canvas>
 </div>
