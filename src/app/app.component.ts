@@ -3,6 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { ChartComponent } from './components';
 import { fft } from './utility';
 
+const EPSILON = 1e-10;
+const fix = (x: number): number => (x > -EPSILON && x < EPSILON ? 0 : x);
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -35,7 +38,7 @@ export class AppComponent {
 
     const n = 2 ** Math.ceil(Math.log2(timeData.length));
 
-    return fft(timeData, n).map(x => [x[0] / n, x[1] / n]);
+    return fft(timeData, n).map(x => [fix(x[0] / n), fix(x[1] / n)]);
   });
 
   readonly freqReal = computed(() => this.freqData().map(x => x[0]));

@@ -8,7 +8,7 @@ export function generateBounds(
     min = d < min ? d : min;
     max = d > max ? d : max;
   }
-  [min, max] = [min - 0.01 * (max - min), max + 0.01 * (max - min)];
+  max = max + 0.01 * (max - min);
 
   const rangeRaw = max - min;
 
@@ -32,7 +32,7 @@ export function generateBounds(
   return {
     min: niceMin,
     max: niceMax,
-    ticks: new Array((niceMax - niceMin) / niceSpacing - 1)
+    ticks: new Array(Math.round((niceMax - niceMin) / niceSpacing) - 1)
       .fill(0)
       .map((_, i) => niceMin + (i + 1) * niceSpacing),
   };
