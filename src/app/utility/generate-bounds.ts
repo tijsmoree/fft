@@ -2,8 +2,13 @@ export function generateBounds(
   data: number[],
   maxTicks = 10,
 ): { min: number; max: number; ticks: number[] } {
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  let min = Infinity;
+  let max = -Infinity;
+  for (const d of data) {
+    min = d < min ? d : min;
+    max = d > max ? d : max;
+  }
+  [min, max] = [min - 0.01 * (max - min), max + 0.01 * (max - min)];
 
   const rangeRaw = max - min;
 
@@ -19,7 +24,7 @@ export function generateBounds(
   const niceFraction =
     fraction < 1.5 ? 1 : fraction < 3 ? 2 : fraction < 7 ? 5 : 10;
 
-  const niceSpacing = niceFraction * Math.pow(10, exponent);
+  const niceSpacing = niceFraction * 10 ** exponent;
 
   const niceMin = Math.floor(min / niceSpacing) * niceSpacing;
   const niceMax = Math.ceil(max / niceSpacing) * niceSpacing;
@@ -38,8 +43,12 @@ export function generateLogarithmicBounds(data: number[]): {
   max: number;
   ticks: number[];
 } {
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  let min = Infinity;
+  let max = -Infinity;
+  for (const d of data) {
+    min = d < min ? d : min;
+    max = d > max ? d : max;
+  }
 
   const niceMax = 10 ** Math.ceil(Math.log10(max));
 
