@@ -7,7 +7,7 @@ import {
   effect,
   ElementRef,
   input,
-  model,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core';
@@ -35,8 +35,6 @@ export class ChartComponent {
 
   readonly data = input.required<number[]>();
 
-  readonly cursor = model<number | undefined>();
-
   readonly fourier = input(false, { transform: booleanAttribute });
 
   readonly selection = computed(() =>
@@ -52,6 +50,8 @@ export class ChartComponent {
       ? generateLogarithmicBounds(this.selection())
       : generateBounds(this.selection()),
   );
+
+  readonly cursor = signal<number | undefined>(undefined);
 
   constructor() {
     effect(() => {

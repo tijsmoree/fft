@@ -1,4 +1,4 @@
-import { Component, computed, effect, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChartComponent } from './components';
 import { fft } from './utility';
@@ -44,10 +44,4 @@ export class AppComponent {
   readonly freqMagn = computed(() =>
     this.freqData().map(x => Math.sqrt(x[0] ** 2 + x[1] ** 2)),
   );
-
-  readonly cursor = signal<number | undefined>(undefined);
-
-  constructor() {
-    effect(() => console.log(this.cursor()));
-  }
 }
